@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  
+  <!-- 자식요소 -->
+  <!-- div>ul>li -->
+  <div>
+    <ul>
+      <li></li>
+    </ul>
+  </div>
+
+  <!-- 형제 -->
+  <!-- div>h2+span -->
+  <div>
+    <h2></h2>
+    <span></span>
+  </div>  
+
+  <!-- 한 단계 올라가기 -->
+  <!-- div>ul>li^h2+span -->
+  <div>
+    <ul>
+      <li></li>
+    </ul>
+    <h2></h2>
+    <span></span>
+  </div>
+
+  <!-- 반복생성 1 -->
+  <!-- ul>li*5 -->
+  <ul>
+    <li></li>
+    <li></li>
+    <li></li>
+    <li></li>
+    <li></li>
+  </ul>
+
+  <!-- 단위 묶음 -->
+  <!-- div>(nav>ol>li*3)+div -->
+  <div>
+    <nav>
+      <ol>
+        <li></li>
+        <li></li>
+        <li></li>
+      </ol>
+    </nav>
+    <div></div>
+  </div>
+
+  <!-- 클래스 속성 -->
+  <!-- .mx-10 -->
+  <div class="mx-10"></div>
+
+  <!-- span.mx-10 -->
+  <span class="mx-10"></span>
+
+  <!-- .mt-10.mb-10.ml-10.mr10 -->
+  <div class="mt-10 mb-10 ml-10 mr10"></div>
+
+  <!-- id 속성 -->
+  <!-- span#font-lg -->
+  <span id="font-lg"></span>
+
+  <!-- <img src="" alt=""> -->
+  <!-- img[src="some_url"][alt="image"] -->
+  <img src="some_url" alt="image">
+
+
+  <!-- 번호매김 -->
+  <!-- ol>li.item$*5 -->
+  <ol>
+    <li class="item1"></li>
+    <li class="item2"></li>
+    <li class="item3"></li>
+    <li class="item4"></li>
+    <li class="item5"></li>
+  </ol>
+
+  <!-- ol>li.item$@10*5 -->
+  <ol>
+    <li class="item10"></li>
+    <li class="item11"></li>
+    <li class="item12"></li>
+    <li class="item13"></li>
+    <li class="item14"></li>
+  </ol>
+
+  <!-- .box{Hello, World!} -->
+  <div class="box">Hello, World!</div>
+
+  <!-- ol>li.item{$@10}*5 -->
+  <ol>
+    <li class="item">10</li>
+    <li class="item">11</li>
+    <li class="item">12</li>
+    <li class="item">13</li>
+    <li class="item">14</li>
+  </ol>
+
+  <!-- .container>ol>li.item*5>a[href="#"]{아이템 $} -->
+  <div class="container">
+    <ol>
+      <li class="item"><a href="#">아이템 1</a></li>
+      <li class="item"><a href="#">아이템 2</a></li>
+      <li class="item"><a href="#">아이템 3</a></li>
+      <li class="item"><a href="#">아이템 4</a></li>
+      <li class="item"><a href="#">아이템 5</a></li>
+    </ol>
+  </div>
+
+  <!-- .list-container>.item*10>{$} -->
+  <div class="list-container">
+    <div class="item">1</div>
+    <div class="item">2</div>
+    <div class="item">3</div>
+    <div class="item">4</div>
+    <div class="item">5</div>
+    <div class="item">6</div>
+    <div class="item">7</div>
+    <div class="item">8</div>
+    <div class="item">9</div>
+    <div class="item">10</div>
+  </div>
+
+
+</body>
+</html>

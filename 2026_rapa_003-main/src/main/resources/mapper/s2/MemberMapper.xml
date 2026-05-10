@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper.s2.MemberMapper">
+
+    <select id="findAll" resultType="domain.Member">
+        SELECT
+            id,
+            name,
+            password,
+            email,
+            balance
+        FROM
+            member
+    </select>
+
+    <select id="findById" resultType="domain.Member" parameterType="long">
+        SELECT
+            id,
+            name,
+            password,
+            email,
+            balance
+        FROM
+            member
+        WHERE
+            id = #{id}
+    </select>
+
+    <select id="findByEmail" resultType="domain.Member" parameterType="string">
+        SELECT
+            id,
+            name,
+            password,
+            email,
+            balance
+        FROM
+            member
+        WHERE
+            email = #{email}
+    </select>
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO member
+            (name, password, email, balance )
+        VALUES
+            ( #{name}, #{password}, #{email}, #{balance} )
+    </insert>
+
+<!--
+    balance = balance + #{amount}
+-->
+    <update id="updateBalance">
+        UPDATE member
+        SET
+            balance = #{amount}
+        WHERE
+            id = #{id}
+    </update>
+
+    <delete id="deleteById" parameterType="long">
+        DELETE FROM member
+        WHERE
+            id = #{id}
+    </delete>
+
+    <select id="count" resultType="int">
+        SELECT
+            COUNT(*)
+        FROM
+            member
+    </select>
+
+
+</mapper>

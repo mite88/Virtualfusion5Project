@@ -1,0 +1,7 @@
+# server:
+#  port: 8085
+
+#spring:
+#  thymeleaf:
+#    prefix: classpath:/custom/
+#    suffix: .txt

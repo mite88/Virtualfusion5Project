@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper.s4.MemberMapper">
+
+<!--
+    컬럼과 필드를 명시적으로 연결하는 매핑 설정
+-->
+    <resultMap id="memberDtoResultMap" type="domain.MemberDto">
+
+        <id property="memberId" column="member_id" />
+
+        <result property="memberName" column="member_name" />
+        <result property="memberBalance" column="member_balance" />
+
+    </resultMap>
+
+    <select id="findAll" resultMap="memberDtoResultMap">
+        SELECT
+            id AS member_id,
+            name AS member_name,
+            balance AS member_balance
+        FROM
+            member
+    </select>
+
+
+    <select id="findById" parameterType="long" resultType="domain.Member">
+        SELECT
+            id,
+            name,
+            email,
+            balance
+        FROM
+            member
+        WHERE
+            id = #{id}
+    </select>
+
+
+</mapper>

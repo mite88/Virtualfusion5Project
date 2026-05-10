@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper.s5.ProductMapper">
+
+    <resultMap id="productMap" type="domain.Product" autoMapping="true">
+        <id property="id" column="id" />
+    </resultMap>
+
+    <select id="findById" resultMap="productMap" parameterType="long">
+        SELECT
+            *
+        FROM
+            product
+        WHERE
+            id = #{id}
+    </select>
+
+    <update id="updateById" parameterType="domain.Product">
+        UPDATE product
+        SET
+            stock = #{stock}
+        WHERE
+            id = #{id}
+    </update>
+
+</mapper>

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper.s3.S3ProductMapperV2">
+
+    <sql id="productColumns">
+        id, name, price, stock
+    </sql>
+
+    <select id="search" parameterType="map" resultType="domain.Product">
+        SELECT
+            <include refid="productColumns" />
+        FROM
+            product
+        WHERE 1=1
+        <if test="name != null and name != ''">
+            AND name LIKE CONCAT('%', #{name}, '%')
+        </if>
+        <if test="minPrice != null and minPrice > 0">
+            AND price &gt;= #{minPrice}
+        </if>
+        <if test="maxPrice != null and maxPrice > 0">
+            AND price &lt;= #{maxPrice}
+        </if>
+        <if test="inStock != null and inStock > 0">
+            AND stock &gt; 0
+        </if>
+    </select>
+
+    <select id="search2" parameterType="map" resultType="domain.Product">
+        SELECT
+            <include refid="productColumns" />
+        FROM
+            product
+        <where>
+            <if test="name != null and name != ''">
+                AND name LIKE CONCAT('%', #{name}, '%')
+            </if>
+            <if test="minPrice != null and minPrice > 0">
+                AND price &gt;= #{minPrice}
+            </if>
+            <if test="maxPrice != null and maxPrice > 0">
+                AND price &lt;= #{maxPrice}
+            </if>
+            <if test="inStock != null and inStock > 0">
+                AND stock &gt; 0
+            </if>
+        </where>
+    </select>
+
+    <select id="findAllSorted" parameterType="domain.ProductSortType" resultType="domain.Product">
+        SELECT
+            <include refid="productColumns" />
+        FROM
+            product
+        ORDER BY
+        <choose>
+            <when test="_parameter.name() == 'PRICE'">
+                price ASC
+            </when>
+            <when test="_parameter.name() == 'STOCK'">
+                stock ASC
+            </when>
+            <when test="_parameter.name() == 'NAME'">
+                `name` ASC
+            </when>
+            <otherwise>
+                id ASC
+            </otherwise>
+        </choose>
+    </select>
+
+    <update id="updateProduct" parameterType="domain.Product">
+        UPDATE product
+        <set>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="price != null and price > 0">
+                price = #{price},
+            </if>
+            <if test="stock != null and stock > 0">
+                stock = #{stock},
+            </if>
+        </set>
+        WHERE
+            id = #{id}
+    </update>
+
+    <select id="findByIds" resultType="domain.Product">
+        SELECT
+            <include refid="productColumns" />
+        FROM
+            product
+        <where>
+            <choose>
+                <when test="ids != null and ids.size() > 0">
+                    id IN
+                    <foreach collection="ids" item="id" open="(" separator="," close=")">
+                        #{id}
+                    </foreach>
+                </when>
+
+                <otherwise>
+                    1 = 0
+                </otherwise>
+            </choose>
+        </where>
+    </select>
+
+    <insert id="saveAll">
+        INSERT INTO product
+            ( name, price, stock )
+        VALUES
+        <foreach collection="products" item="p" separator=",">
+            ( #{p.name}, #{p.price}, #{p.stock} )
+        </foreach>
+    </insert>
+
+</mapper>

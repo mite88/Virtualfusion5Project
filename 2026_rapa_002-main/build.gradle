@@ -1,0 +1,32 @@
+plugins {
+    id 'java'
+}
+
+group = 'org.example'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Source: https://mvnrepository.com/artifact/com.mysql/mysql-connector-j
+    implementation 'com.mysql:mysql-connector-j:9.6.0'
+
+    // Source: https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client
+    implementation 'org.mariadb.jdbc:mariadb-java-client:3.5.8'
+
+    // Source: https://mvnrepository.com/artifact/com.h2database/h2
+    implementation 'com.h2database:h2:2.4.240'
+
+    // Source: https://mvnrepository.com/artifact/com.zaxxer/HikariCP
+    implementation 'com.zaxxer:HikariCP:7.0.2'
+
+    testImplementation platform('org.junit:junit-bom:6.0.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+test {
+    useJUnitPlatform()
+}

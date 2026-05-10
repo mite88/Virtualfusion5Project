@@ -1,0 +1,46 @@
+plugins {
+    id 'java'
+//    id 'war'
+    id("org.springframework.boot") version "4.0.6"
+    id("io.spring.dependency-management") version "1.1.7"
+}
+
+group = 'org.example'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+//    // Source: https://mvnrepository.com/artifact/org.springframework/spring-core
+//    implementation 'org.springframework:spring-core:7.0.7'
+//
+//    // Source: https://mvnrepository.com/artifact/org.springframework/spring-context
+//    implementation 'org.springframework:spring-context:7.0.7'
+//
+//    // Source: https://mvnrepository.com/artifact/org.springframework/spring-webmvc
+//    implementation 'org.springframework:spring-webmvc:7.0.7'
+//
+//    // Source: https://mvnrepository.com/artifact/jakarta.servlet/jakarta.servlet-api
+//    compileOnly 'jakarta.servlet:jakarta.servlet-api:6.0.0'
+//
+//    // Source: https://mvnrepository.com/artifact/org.thymeleaf/thymeleaf
+//    implementation 'org.thymeleaf:thymeleaf:3.1.5.RELEASE'
+//
+//    // Source: https://mvnrepository.com/artifact/org.thymeleaf/thymeleaf-spring6
+//    implementation 'org.thymeleaf:thymeleaf-spring6:3.1.5.RELEASE'
+
+    testImplementation platform('org.junit:junit-bom:6.0.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+}
+
+test {
+    useJUnitPlatform()
+}
