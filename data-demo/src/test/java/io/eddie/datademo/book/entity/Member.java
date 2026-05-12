@@ -16,12 +16,12 @@ import java.time.LocalDateTime;
  * -----------------------------------------------------------
  * 26. 5. 12.        Admin       최초 생성
  */
-@Entity
-@Setter
-@Getter
-@RequiredArgsConstructor
 @Builder
+@Getter
+@Setter
+@Entity
 @AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED) // 기본 생성자 필수
 public class Member {
 
     @Id
@@ -34,6 +34,8 @@ public class Member {
     @Column(nullable = false, unique = false)
     private String email;
     private String address;
+
+    @Builder.Default
     private LocalDateTime createAt = LocalDateTime.now(); // 가입일
 
 }

@@ -19,9 +19,9 @@ import java.util.Objects;
 @Builder
 @Getter
 @Setter
-@RequiredArgsConstructor
 @Entity
 @AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED) // 기본 생성자 필수
 public class Book {
 
     @Id
@@ -39,5 +39,7 @@ public class Book {
 
     @Builder.Default
     private Integer stock = 10;
+
+
 
 }

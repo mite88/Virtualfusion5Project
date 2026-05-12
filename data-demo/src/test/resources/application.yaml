@@ -13,7 +13,7 @@ spring:
     hibernate:
       # 2. 테스트 환경에서는 'create-drop'이 더 안전함
       #ddl-auto: create
-      ddl-auto: create-drop
+      ddl-auto: create
     show-sql: true
     properties:
       hibernate:

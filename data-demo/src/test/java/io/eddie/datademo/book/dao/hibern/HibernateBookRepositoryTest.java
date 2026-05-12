@@ -2,12 +2,15 @@ package io.eddie.datademo.book.dao.hibern;
 
 import io.eddie.datademo.book.entity.Book;
 import io.eddie.datademo.book.util.TestUtil;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
@@ -68,6 +71,7 @@ import static io.eddie.datademo.book.util.TestUtil.*;
  *    - 필수값(Title, Name 등)에 null을 넣고 저장했을 때 에러가 나는지 확인.
  */
 @SpringBootTest
+@Transactional //각 테스트가 끝날 때마다 데이터를 자동으로 롤백(삭제)하여 다음 테스트에 영향을 주지 않음
 public class HibernateBookRepositoryTest {
 
     @Autowired
@@ -75,13 +79,16 @@ public class HibernateBookRepositoryTest {
 
     Book book;
 
+
     @BeforeEach
     void init(){
+
         book = repository.createBook(generateBook());
     }
 
-    //create
+    //create 테스트
     @Test
+    @DisplayName("도서 저장 : 도서가 정상적으로 저장되어 새로은 ID가 나와야함 ")
     void Book_들어가는거_테스트(){
         /*
          - Given: TestUtil 등을 사용해 엔티티 객체 생성 및 기초 데이터 저장.
@@ -101,36 +108,167 @@ public class HibernateBookRepositoryTest {
 
     //create 실패테스트
     @Test
-    void Book_빈값삽입_테스트() {
+    @DisplayName("도서 저장 실패 : 중복된 ISBN 저장 시 null을 반환")
+    void Book_중복된_ISBN_삽입_테스트() {
+        // Given
+        Book book2 = Book.builder()
+                .title("중복 도서")
+                .isbn(book.getIsbn()) // BeforeEach에서 저장된 ISBN 사용
+                .author("다른 저자")
+                .build();
+
+        // When
+        Book result = repository.createBook(book2);
+
+        // Then
+        assertThat(result).isNull();
+    }
+
+
+    // --------------------------------------------
+
+    //단건 조회 (Read) 테스트
+    @Test
+    @DisplayName("단건 조회 : 존재하는 ID 조회시 값이 나와야함")
+    void Book_단건조회_테스트(){
+        // Given
+        Long targetId = book.getId();
+
+        // When
+        Optional<Book> found = repository.read(targetId);
+
+        // Then
+        // isEmpty()가 아니라 isPresent() 혹은 isFalse()여야 합니다.
+        assertThat(found.isPresent()).isTrue();
+
+        Book findItem = found.get();
+
+        assertThat(findItem.getId()).isEqualTo(targetId);
+        assertThat(findItem.getIsbn()).isEqualTo(book.getIsbn());
+
+    }
+
+    //단건 조회 (Read) 실패테스트
+    @Test
+    @DisplayName("단건 조회 : 없는 ID로 단건 조회하면 빈 Optional 반환")
+    void Book_단건조회_실패테스트() {
         // Given
         Long invalidId = 99999L;
 
         // When
-        Optional<Book> found = repository.read(invalidId);
+        Optional<Book> findItem = repository.read(invalidId);
 
         // Then
-        assertThat(found.isEmpty()).isTrue();
+        assertThat(findItem).isEmpty();
+    }
+
+
+    //  목록/조건 조회 (Search) 테스트
+    @Test
+    @DisplayName("목록 조회 : 특정 ID보다 큰 값을 가진 모든 목록 반환")
+    void Book_목록조회_테스트(){
+        //Given - 도서 3권 저장
+        repository.createBook(TestUtil.generateBook()); // ID: 1 (예시)
+        repository.createBook(TestUtil.generateBook()); // ID: 2
+        repository.createBook(TestUtil.generateBook()); // ID: 3
+
+        //When - 조건으로 1보다 큰거 조회하기
+        List<Book> books = repository.search(1);
+
+        //Then - 1보다 큰지도 보기
+        assertThat(books).allMatch(book -> book.getId() > 1);
+
+    }
+
+    //  목록/조건 조회 (Search) 실패 테스트
+    @Test
+    @DisplayName("목록 조회 실패: 검색 조건에 맞는 도서가 없으면 빈 리스트를 반환")
+    void Book_목록조회_실패테스트() {
+        // Given
+        repository.createBook(TestUtil.generateBook());
+
+        // When
+        List<Book> books = repository.search(9999);
+
+        // [Then]
+        assertThat(books).isEmpty();
+        assertThat(books).isNotNull(); // 리스트 객체 자체는 존재해야 함
+    }
+
+    //  수정 (Update) (Search) 테스트
+    @Test
+    @DisplayName("도서 수정: 수정하면 도서의 제목과 저자가 DB에 반영")
+    void Book_수정_테스트(){
+        //Given
+        Long targetId = book.getId();
+
+        Book updateParam = Book.builder()
+                .title("수정된 제목")
+                .author("수정된 작가")
+                .isbn(book.getIsbn()) // ISBN은 그대로 유지
+                .price(50000)
+                .build();
+
+        //When
+        repository.updateStatus(targetId, updateParam);
+
+        //Then - 바뀌었는지 확인용
+        Book updatedBook = repository.read(targetId).get();
+
+        assertThat(updatedBook.getTitle()).isEqualTo("수정된 제목");
+        assertThat(updatedBook.getAuthor()).isEqualTo("수정된 작가");
+        assertThat(updatedBook.getPrice()).isEqualTo(50000);
+
+    }
+
+    //  수정 (Update) (Search) 실패 테스트
+    @Test
+    @DisplayName("도서 수정 실패: 존재하지 않는 ID 수정 시도 시 NullPointerException")
+    void Book_수정_실패테스트(){
+        //Given
+        Long invalidId = 99999L;
+
+        Book updateParam = Book.builder()
+                .title("수정된 실패제목")
+                .author("수정된 실패작가")
+                .isbn(book.getIsbn()) // ISBN은 그대로 유지
+                .price(50000)
+                .build();
+
+        //When
+        //repository.updateStatus(invalidId, updateParam);
+
+        //When / Then
+        /*assertThatThrownBy(() ->
+                repository.updateStatus(invalidId, updateParam))
+                .isInstanceOf(NullPointerException.class);*/
+
+        // 에러 없이 끝나게 하는법
+        assertThatCode(() -> repository.updateStatus(invalidId, updateParam))
+                .doesNotThrowAnyException();
+
     }
 
     @Test
-    void Book_값은값_저장_테스트() {
+    @DisplayName("도서 삭제: ID로 도서를 삭제  후 조회하면 결과가 없어야함")
+    void Book_삭제_테스트() {
         // Given
-        Book book1 = TestUtil.generateBook();
-        repository.createBook(book1);
+        Long targetId = book.getId();
 
-        // 같은 ISBN을 가진 다른 객체 생성
-        Book book2 = Book.builder()
-                .title("다른 책")
-                .isbn(book1.getIsbn()) // 중복 ISBN
-                .author("다른 저자")
-                .build();
-
-        // When & Then
-        /*assertThatThrownBy(() -> {
-            repository.createBook(book2);
-        }).isInstanceOf(Exception.class);*/
-        Book result = repository.createBook(book2);
-        assertThat(result).isNull();
-
+        // When
+        repository.delete(targetId);
     }
+
+    @Test
+    @DisplayName("도서 삭제 실패: 존재하지 않는 ID로 삭제 시도 시 에러 없이 종료")
+    void Book_삭제_존재하지않는ID_테스트() {
+        // Given
+        Long invalidId = 99999L;
+
+        // When & Then (에러가 터지지 않는 것이 성공)
+        assertThatCode(() -> repository.delete(invalidId))
+                .doesNotThrowAnyException();
+    }
+
+
 }

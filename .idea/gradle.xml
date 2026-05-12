@@ -42,6 +42,11 @@
       <GradleProjectSettings>
         <option name="externalProjectPath" value="$PROJECT_DIR$/2026_rapa_008-main" />
         <option name="gradleJvm" value="#JAVA_HOME" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/2026_rapa_008-main" />
+          </set>
+        </option>
       </GradleProjectSettings>
     </option>
   </component>
