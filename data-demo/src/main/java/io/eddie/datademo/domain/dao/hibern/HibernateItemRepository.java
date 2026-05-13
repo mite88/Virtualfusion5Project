@@ -4,6 +4,7 @@ import io.eddie.datademo.domain.Items;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -20,6 +21,7 @@ import java.util.Optional;
  * -----------------------------------------------------------
  * 26. 5. 12.        Admin       최초 생성
  */
+@Slf4j
 @Repository
 @Transactional //
 @RequiredArgsConstructor
@@ -71,4 +73,31 @@ public class HibernateItemRepository {
         return entityManager.createQuery("select i from Items i", Items.class).getResultList();
     }
 
+    //벌크쿼리
+    public List<Items> saveAll(List<Items> items){
+        //일반적
+        //items.forEach(i -> entityManager.persist(i));
+        //이렇게 하면 자료 많으면 오래 걸리기 때문에 배치를 사용함
+
+        final int BATCH_SIZE = 50;
+        //batch : 일괄처리
+        for(int i = 0; i <items.size(); i++){
+            entityManager.persist(items.get(i));
+            if(i % BATCH_SIZE == 0 && i > 0){
+                entityManager.flush();
+                entityManager.clear();
+                log.info("flush!");
+            }
+        }
+
+        //어중간하게 남을 수 있기때문
+        entityManager.flush();
+        entityManager.clear();
+        log.info("flush!");
+
+        //IntStream.range(0, BATCH_SIZE)
+
+
+        return items;
+    }
 }

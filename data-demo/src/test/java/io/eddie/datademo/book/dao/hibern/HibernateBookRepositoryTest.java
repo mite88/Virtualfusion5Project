@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.test.annotation.Rollback;
 
 import java.util.List;
 import java.util.Optional;
@@ -71,7 +72,6 @@ import static io.eddie.datademo.book.util.TestUtil.*;
  *    - 필수값(Title, Name 등)에 null을 넣고 저장했을 때 에러가 나는지 확인.
  */
 @SpringBootTest
-@Transactional //각 테스트가 끝날 때마다 데이터를 자동으로 롤백(삭제)하여 다음 테스트에 영향을 주지 않음
 public class HibernateBookRepositoryTest {
 
     @Autowired
@@ -198,6 +198,7 @@ public class HibernateBookRepositoryTest {
     //  수정 (Update) (Search) 테스트
     @Test
     @DisplayName("도서 수정: 수정하면 도서의 제목과 저자가 DB에 반영")
+    @Rollback(false) // 커밋이 발생하며 UPDATE 로그가 보임
     void Book_수정_테스트(){
         //Given
         Long targetId = book.getId();

@@ -2,11 +2,14 @@ package io.eddie.datademo.domain.dao.hibern;
 
 import io.eddie.datademo.domain.Items;
 import io.eddie.datademo.domain.util.TestUtil;
-import org.assertj.core.api.Assertions;
+import jakarta.persistence.EntityManagerFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import static io.eddie.datademo.domain.util.TestUtil.generateItem;
+import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -46,12 +49,13 @@ class HibernateItemRepositoryTest {
       */
 
     Items item; // BeforeEach에서 저장된 데이터를 담을 변수
+    @Autowired
+    private EntityManagerFactory entityManagerFactory;
 
     @BeforeEach
     void init() {
         // 모든 테스트 실행 전에 아이템 하나를 저장해둠
-        item = TestUtil.generateItems(); // 2. 필드에 할당 (Items 타입 선언 빼기)
-        repository.save(item);
+        item = repository.save(generateItem());
     }
 
     //테스트 시 어떤식으로 될거라는걸로 메서드명을 짓는게 좋음
@@ -70,7 +74,7 @@ class HibernateItemRepositoryTest {
         }*/
 
         //then
-        Assertions.assertThat(item.getId()).isNotNull();
+        assertThat(item.getId()).isNotNull();
     }
 
 
@@ -92,8 +96,8 @@ class HibernateItemRepositoryTest {
         Items findItem = repository.findByCode(targetCode);
 
         //then
-        Assertions.assertThat(item.getId()).isEqualTo(findItem.getId());
-        Assertions.assertThat(item.getCode()).isEqualTo(findItem.getCode());
+        assertThat(item.getId()).isEqualTo(findItem.getId());
+        assertThat(item.getCode()).isEqualTo(findItem.getCode());
 
     }
 
@@ -110,7 +114,7 @@ class HibernateItemRepositoryTest {
         Items findItem = repository.findByCode(unavailableCode);
 
         //then
-        Assertions.assertThat(findItem).isNull();
+        assertThat(findItem).isNull();
 
     }
 
@@ -124,11 +128,11 @@ class HibernateItemRepositoryTest {
         Long targetId = item.getId();
 
         Optional<Items> itemsOptional = repository.findById(targetId);
-        Assertions.assertThat(itemsOptional.isPresent()).isTrue();
+        assertThat(itemsOptional.isPresent()).isTrue();
 
         Items findItem = itemsOptional.get();
-        Assertions.assertThat(findItem).isNotNull();
-        Assertions.assertThat(findItem.getId()).isEqualTo(targetId);
+        assertThat(findItem).isNotNull();
+        assertThat(findItem.getId()).isEqualTo(targetId);
 
     }
 
@@ -139,11 +143,11 @@ class HibernateItemRepositoryTest {
         Long UNAVAILABLE_ID = 10000L;
 
         Optional<Items> itemsOptional = repository.findById(UNAVAILABLE_ID);
-        Assertions.assertThat(itemsOptional.isPresent()).isFalse();
+        assertThat(itemsOptional.isPresent()).isFalse();
 
         //value가 null일 경우 NoSuchElementException을 발생
         //itemsOptional.get();
-        Assertions.assertThatThrownBy(
+        assertThatThrownBy(
                 () -> itemsOptional.get()
         ).isInstanceOf(NoSuchElementException.class);
     }
@@ -156,7 +160,7 @@ class HibernateItemRepositoryTest {
 
         //아이템 가져오기
         Items findItem = repository.findByCode(item.getCode());
-        Assertions.assertThat(findItem.getPrice()).isEqualTo(TARGET_PRICE);
+        assertThat(findItem.getPrice()).isEqualTo(TARGET_PRICE);
     }
 
 
@@ -167,7 +171,7 @@ class HibernateItemRepositoryTest {
         final String INVALID_CODE = "ITEM_CODE";
         repository.updatePrice(item.getCode(), TARGET_PRICE);
 
-        Assertions.assertThatThrownBy(()->repository.updatePrice(INVALID_CODE, TARGET_PRICE))
+        assertThatThrownBy(()->repository.updatePrice(INVALID_CODE, TARGET_PRICE))
                 .isInstanceOf(NullPointerException.class);
     }
 
@@ -179,16 +183,35 @@ class HibernateItemRepositoryTest {
         items.stream().forEach(i -> repository.save(i));
         /*INSERT INTO VALUES (),(),().....();*/
 
-        //벌크쿼리용 만들기 - 배치
+        //벌크쿼리용 만들기 - 배치 밑메서드에서 할거임
         //repository.saveall
 
         List<Items> findItems = repository.findAll();
 
         //이대로하면 오류남
-        //Assertions.assertThat(findItems.size()).isEqualTo(SIZE);
-        Assertions.assertThat(findItems.size()).isGreaterThan(SIZE);
+        //AssertThat(findItems.size()).isEqualTo(SIZE);
+        assertThat(findItems.size()).isGreaterThan(SIZE);
 
     }
+
+    //벌크 데이터 테스트
+    @Test
+    void it_will_save_all(){
+        int SIZE = 1000;
+        List<Items> items = generateItemList(SIZE);
+
+        List<Items> savedList = repository.saveAll(items);
+
+        assertThat(savedList.size()).isEqualTo(SIZE);
+
+        savedList.forEach(
+                item -> assertThat(item.getId()).isNotNull()
+        );
+
+
+    }
+
+
 
     //ctrl+rit + m 으로 매서드따로빼기
     //하고 F6으로 옮기기

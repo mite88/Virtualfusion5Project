@@ -17,8 +17,9 @@ import java.util.Objects;
  * -----------------------------------------------------------
  * 26. 5. 12.        Admin       최초 생성
  */
-@Entity
 @Getter
+@Entity
+@Table(name = "items")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Items {
 
@@ -34,23 +35,20 @@ public class Items {
     @Setter
     private Integer price;
 
-    private LocalDateTime createAt; //생성시간
+    private LocalDateTime createdAt = LocalDateTime.now();
 
-    //생성자
-    @Builder //이걸로 나중에 넣을때 순서 맞쳐서 넣게 해보자
+    @Builder
     public Items(String name, String code, Integer price) {
         this.name = name;
         this.code = code;
         this.price = price;
-
-        this.createAt = LocalDateTime.now();
     }
 
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        Items items = (Items) o;
-        return Objects.equals(id, items.id) && Objects.equals(code, items.code);
+        Items item = (Items) o;
+        return Objects.equals(id, item.id) && Objects.equals(code, item.code);
     }
 
     @Override

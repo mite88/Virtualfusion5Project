@@ -1,30 +1,27 @@
+# H2
+# datasource
 spring:
-  application:
-    name: data-demo
 
-  # h2 / datasource
   datasource:
-    # 1. ';' 뒤에 'DB_CLOSE_DELAY=-1' 권장 (테스트 도중 DB 휘발 방지)
-    url: jdbc:h2:mem:testdb;MODE=MYSQL;DB_CLOSE_DELAY=-1
+    url: jdbc:h2:mem:test-db;MODE=MYSQL;
     username: sa
     password:
 
   jpa:
     hibernate:
-      # 2. 테스트 환경에서는 'create-drop'이 더 안전함
-      #ddl-auto: create
       ddl-auto: create
     show-sql: true
     properties:
       hibernate:
         format_sql: true
-        # 3. H2 방언 명시 (MySQL 모드 최적화)
-        dialect: org.hibernate.dialect.H2Dialect
 
-logging:
-  level:
-    org.springframework.jdbc: DEBUG
-    # 4. 'hubernate' → 'hibernate'로 오타 수정!
-    org.hibernate.SQL: DEBUG
-    # 5. 바인딩 파라미터(?값)까지 보고 싶을 때 추가
-    org.hibernate.orm.jdbc.bind: TRACE
+#
+#logging:
+#  level:
+#    org.springframework.jdbc: DEBUG
+
+mybatis:
+  type-aliases-package: com.example.demo.domain
+  configuration:
+    map-underscore-to-camel-case: true
+  mapper-locations: classpath:mappers/*.xml

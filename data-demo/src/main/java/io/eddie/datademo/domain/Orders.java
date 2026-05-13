@@ -1,9 +1,8 @@
 package io.eddie.datademo.domain;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -23,6 +22,9 @@ import java.util.Objects;
  */
 @Entity
 @Getter
+@Table(name = "orders")
+@Builder // 빌더 패턴 사용 가능하게 함
+@AllArgsConstructor // 빌더를 위한 전인자 생성자
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Orders {
 
@@ -47,6 +49,8 @@ public class Orders {
             this.orderItems.addAll(items);
         }
     }
+
+
 
     @Override
     public boolean equals(Object o) {

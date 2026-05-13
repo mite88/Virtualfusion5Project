@@ -19,6 +19,7 @@ import lombok.NoArgsConstructor;
 /*@Accessors(chain = true)*/
 @Entity
 @Getter
+@Table(name = "order_items")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class OrderItems {
 

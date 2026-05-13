@@ -6,6 +6,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import org.springframework.test.annotation.Rollback;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,7 +23,7 @@ import java.util.Optional;
  * 26. 5. 12.        Admin       최초 생성
  */
 @RequiredArgsConstructor
-@Transactional
+@Transactional //각 테스트가 끝날 때마다 데이터를 자동으로 롤백(삭제)하여 다음 테스트에 영향을 주지 않음
 @Repository
 public class HibernateBookRepository {
 
