@@ -1,4 +1,4 @@
-package io.eddie.datademo.domain.orders.exceptions;
+package io.eddie.datademo.domain.exceptions;
 
 /**
  * packageName    : io.eddie.datademo.domain.orders.exceptions
@@ -12,19 +12,19 @@ package io.eddie.datademo.domain.orders.exceptions;
  * 26. 5. 13.        Admin       최초 생성
  */
 //커스텀 exception 만들기
-public class CouldNotFindSuchOrderException extends RuntimeException{
+public class CouldNotFindSuchOrderItemException extends RuntimeException{
 
-    private static final String MESSAGE = "주문서를 찾을 수 없습니다.";
+    private static final String MESSAGE = "해당주문은 일치하지 않습니다.";
 
-    public CouldNotFindSuchOrderException() {
+    public CouldNotFindSuchOrderItemException() {
         super(MESSAGE);
     }
 
-    public CouldNotFindSuchOrderException(Throwable cause) {
+    public CouldNotFindSuchOrderItemException(Throwable cause) {
         super(MESSAGE, cause);
     }
 
-    public CouldNotFindSuchOrderException(String message, Throwable cause) {
+    public CouldNotFindSuchOrderItemException(String message, Throwable cause) {
         super(message, cause);
     }
 }

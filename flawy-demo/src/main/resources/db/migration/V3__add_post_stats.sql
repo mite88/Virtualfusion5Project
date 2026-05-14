@@ -1,0 +1,1 @@
+ALTER TABLE post ADD COLUMN `status` VARCHAR(20);

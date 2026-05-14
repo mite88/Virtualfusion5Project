@@ -37,8 +37,10 @@ public class Orders {
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     //item관련추가
+    @Builder.Default
     private List<OrderItems> orderItems = new ArrayList<>();
 
+    @Builder.Default
     private LocalDateTime orderAt = LocalDateTime.now();
 
     //생성자

@@ -2,7 +2,7 @@ package io.eddie.datademo.domain.dao.datajpa;
 
 import io.eddie.datademo.domain.OrderItems;
 import io.eddie.datademo.domain.Orders;
-import io.eddie.datademo.domain.orders.exceptions.CouldNotFindSuchOrderException;
+import io.eddie.datademo.domain.exceptions.CouldNotFindSuchOrderException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
