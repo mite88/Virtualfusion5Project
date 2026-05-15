@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: form-based
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    # tblog 데이터베이스가 실제로 생성되어 있는지 확인하세요!
+    url: jdbc:mysql://localhost:3306/sec_form
+    username: root
+    password: '1234'
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+
