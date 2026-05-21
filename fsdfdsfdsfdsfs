@@ -1,0 +1,41 @@
+[33mcommit 611fc8849b1d90b5bbcad5aeb0e1a069bfd74112[m[33m ([m[1;36mHEAD[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: DESKTOP-QT9VDHF\Admin <oxju5382@gmail.com>
+Date:   Fri May 15 16:20:35 2026 +0900
+
+    # spring boot 시큐리티 실습 중
+
+[33mcommit 43d3ebca750a5ff2bb0d1825b6f8ea1665a56de6[m
+Author: DESKTOP-QT9VDHF\Admin <oxju5382@gmail.com>
+Date:   Thu May 14 18:08:21 2026 +0900
+
+    Querydsl & Flyway Migration, 시큐리티 이론
+
+[33mcommit 0eece5015210b369d83add3e811cc47d2acf5f8d[m
+Author: DESKTOP-QT9VDHF\Admin <oxju5382@gmail.com>
+Date:   Wed May 13 17:57:55 2026 +0900
+
+    2026.05.13 - 스프링 DATA JPA
+
+[33mcommit 7624abeb24c04a2ad4c6de5e713023fa9c71606d[m
+Author: mite88 <oxju5382@gmail.com>
+Date:   Tue May 12 22:01:55 2026 +0900
+
+    book완료
+
+[33mcommit 97f68ae09b60884ec39de450d936e6d5782210a2[m
+Author: DESKTOP-QT9VDHF\Admin <oxju5382@gmail.com>
+Date:   Tue May 12 18:23:19 2026 +0900
+
+    # AOP 수업
+
+[33mcommit c025a61edfc60e34d9332ede4ab01af85213ffa9[m
+Author: mite88 <oxju5382@gmail.com>
+Date:   Sun May 10 17:07:14 2026 +0900
+
+    초기파일 옮기기
+
+[33mcommit 55db1338c4c22625f84f08dc681c5fcc4135c878[m
+Author: mite88 <102147365+mite88@users.noreply.github.com>
+Date:   Sun May 10 17:00:23 2026 +0900
+
+    Initial commit
