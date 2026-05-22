@@ -1,8 +1,8 @@
-package io.eddie.oauth2.service;
+package io.eddie.jwt.service;
 
-import io.eddie.oauth2.dao.MemberRepository;
-import io.eddie.oauth2.domain.Member;
-import io.eddie.oauth2.dto.MemberDetails;
+import io.eddie.jwt.dao.MemberRepository;
+import io.eddie.jwt.domain.Member;
+import io.eddie.jwt.dto.MemberDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -12,7 +12,6 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
