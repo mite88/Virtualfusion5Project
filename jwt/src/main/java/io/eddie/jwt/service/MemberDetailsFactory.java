@@ -1,5 +1,6 @@
 package io.eddie.jwt.service;
 
+
 import io.eddie.jwt.dto.MemberDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
@@ -31,7 +32,7 @@ public class MemberDetailsFactory {
                 Map<String, Object> properties = (Map<String, Object>) attributes.get("response");
                 return MemberDetails.builder()
                         .email(properties.get("email").toString())
-                        .name(properties.get("name").toString())
+                        .name(properties.get("nickname").toString())
                         .attributes(attributes)
                         .build();
             }

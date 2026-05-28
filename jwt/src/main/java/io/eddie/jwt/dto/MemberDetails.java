@@ -1,10 +1,8 @@
 package io.eddie.jwt.dto;
 
-import io.eddie.jwt.dao.Role;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import io.eddie.jwt.domain.Member;
+import lombok.*;
+import lombok.experimental.Accessors;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -13,19 +11,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-/**
- * packageName    : io.eddie.oauth2.dto
- * fileName       : MemberDetails
- * author         : Admin
- * date           : 26. 5. 21.
- * description    :
- * ===========================================================
- * DATE              AUTHOR             NOTE
- * -----------------------------------------------------------
- * 26. 5. 21.        Admin       최초 생성
- */
 @Getter
+@Accessors(chain = true)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberDetails implements OAuth2User {
+
+    @Setter
+    private Long id;
 
     private String email;
     private String name;
@@ -33,11 +25,27 @@ public class MemberDetails implements OAuth2User {
     @Setter
     private Role role;
 
+    private Map<String, Object> attributes;
 
-    private  Map<String, Object> attributes;
+    public static MemberDetails from(Member member) {
+
+        if ( member == null ) {
+            throw new IllegalArgumentException("Member cannot be null");
+        }
+
+        MemberDetails memberDetails = new MemberDetails();
+
+        memberDetails.id = member.getId();
+        memberDetails.email = member.getEmail();
+        memberDetails.name = member.getName();
+        memberDetails.role = member.getRole();
+
+        return memberDetails;
+
+    }
 
     @Builder
-    public MemberDetails(String email, String name, String role, Map<String, Object> attributes) {
+    public MemberDetails(String email, String name, Map<String, Object> attributes) {
         this.email = email;
         this.name = name;
         this.attributes = attributes;
@@ -47,4 +55,5 @@ public class MemberDetails implements OAuth2User {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(this.role.getValue()));
     }
+
 }
