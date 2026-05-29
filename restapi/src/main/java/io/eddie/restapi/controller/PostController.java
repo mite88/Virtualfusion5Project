@@ -57,7 +57,6 @@ public class PostController {
     @ResponseStatus(HttpStatus.CREATED) //201
     public ResponseEntity<Post> savePost(@RequestBody SavePostRequest request){
 
-        // 2. 생성된 객체를 전달
         Post savedPost = repository.save(Post.of(request));
 
         return ResponseEntity.status(HttpStatus.CREATED).body(savedPost);
