@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script th:src="@{/js/global.js}"></script>
+    <script th:src="@{/js/app.js}"></script>
+    <meta charset="UTF-8">
+    <title>API 테스트</title>
+</head>
+<body class="min-h-screen flex justify-center items-center">
+<div class="container mx-auto flex justify-center">
+    <div class="card card-border bg-base-100">
+        <div class="card-body">
+            <h2 id="title" class="card-title">Title</h2>
+            <p id="author" class="text-gray-500">Author</p>
+            <p id="contents">Contents</p>
+            <div class="card-actions justify-center mt-12">
+                <button class="btn btn-soft" onclick="testCall()">GET</button>
+                <button class="btn btn-soft btn-accent" onclick="post_body.showModal()">POST</button>
+
+
+                <dialog id="post_body" class="modal">
+                    <div class="modal-box">
+                        <h3 class="text-lg font-bold my-4">REQUEST BODY</h3>
+                        <input id="post-title" type="text" placeholder="제목" class="input my-2" />
+                        <input id="post-contents" type="text" placeholder="내용" class="input my-2" />
+                        <input id="post-author" type="text" placeholder="작성자" class="input my-2" />
+                        <div>
+                            <button class="btn btn-soft btn-accent mt-4" onclick="createPost()">POST</button>
+                        </div>
+                    </div>
+                </dialog>
+
+                <button class="btn btn-soft btn-info" onclick="patch_body.showModal()">PATCH</button>
+
+                <dialog id="patch_body" class="modal">
+                    <div class="modal-box">
+                        <h3 class="text-lg font-bold my-4">REQUEST BODY</h3>
+                        <input id="patch-title" type="text" placeholder="제목" class="input my-2" />
+                        <input id="patch-contents" type="text" placeholder="내용" class="input my-2" />
+                        <div>
+                            <button class="btn btn-soft btn-info mt-4"  >PATCH</button>
+                        </div>
+                    </div>
+                </dialog>
+
+
+                <button class="btn btn-soft btn-error">DELETE</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+

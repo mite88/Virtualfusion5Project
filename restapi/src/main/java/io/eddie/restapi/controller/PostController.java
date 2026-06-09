@@ -6,6 +6,7 @@ import io.eddie.restapi.dto.UpdatePostRequest;
 import io.eddie.restapi.entity.Post;
 import io.eddie.restapi.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +26,7 @@ import java.util.List;
  */
 @RestController //Rest api용 컨트롤러
 @RequestMapping("/posts")
+@Slf4j
 @RequiredArgsConstructor
 public class PostController {
 
@@ -57,6 +59,7 @@ public class PostController {
     @ResponseStatus(HttpStatus.CREATED) //201
     public ResponseEntity<Post> savePost(@RequestBody SavePostRequest request){
 
+        log.info("Save post request {}", request);
         Post savedPost = repository.save(Post.of(request));
 
         return ResponseEntity.status(HttpStatus.CREATED).body(savedPost);
