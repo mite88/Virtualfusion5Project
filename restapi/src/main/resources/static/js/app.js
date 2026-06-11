@@ -1,23 +1,54 @@
-function testCall(){
-    console.log("hello world!");
+function testCall() {
+    console.log('hello, world!')
 }
 
-//데이터 불러오기
-function createPost(){
-    const data = getPostValues();
-    //console.log(data);
+function getPost() {
 
-    fetch('http://localhost:8080/posts', {
+    if ( !validate() ) {
+        return;
+    }
+
+    fetch(`http://localhost:8080/posts/${getSequence()}`)
+        .then(resp => resp.json())
+        .then(data => {
+
+            refresh(
+                data.data.title,
+                data.data.contents,
+                data.data.author
+            );
+
+            alert('가장 최신 글로 데이터를 갱신했습니다!');
+
+        })
+        .catch(err => console.log(err));
+
+}
+
+
+function createPost() {
+
+    const data  = getPostValues();
+
+    fetch(`http://localhost:8080/posts`, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data) //문자열 JSON으로 변경
-    }).then(resp =>
-        resp.json()
-    ).then(data => {
-        console.log(data);
-    }).catch(onRejected => {
-        console.error('Error posting data:', onRejected);
-    })
+        body: JSON.stringify(data),
+    }).then(
+        resp => resp.json()
+    ).then(
+        data => {
+            updateSequence(data.data.id)
+            alert(data.message);
+            clearPostBody();
+        }
+    )
+        .catch(
+            err => {
+                console.log(err);
+            }
+        )
+
 }

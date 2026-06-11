@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: blog
+
+  profiles:
+    active: h2,redis,dev
+
+custom:
+  jwt:
+    secrets:
+      app-key: ${JWT_APP_KEY}
+    expiration: ${JWT_EXPIRATION:6000000}
+
+  job:
+    queue:
+      key: ${AI_JOB_QUEUE_KEY:ai:job:queue}
+      prefix: ${AI_JOB_QUEUE_PREFIX:ai:job:}
+      ttl: ${AI_JOB_QUEUE_TTL:3600}
+    worker:
+      delay: ${AI_JOB_WORKER_DELAY:1000}
