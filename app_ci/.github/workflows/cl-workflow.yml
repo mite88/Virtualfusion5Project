@@ -25,7 +25,8 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: 테스트 실행
-        run: ./gradlew test --no-daemon
-
+        # 권한을 주고 바로 이어서 테스트를 실행하는 방식입니다.
+        run: chmod +x ./gradlew && ./gradlew test --no-daemon
+        working-directory: 2026_rapa_018-main # 본인의 프로젝트 폴더명 유지
 
 
