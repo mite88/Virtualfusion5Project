@@ -4,9 +4,15 @@ import io.dnlwjtud.blog.blog.global.model.AiJob;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.serializer.JacksonJsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
 public class RedisConfig {
@@ -30,18 +36,43 @@ public class RedisConfig {
         return template;
     }
 
+    @Bean
+    public WebClient.Builder webClientBuilder() {
+        return WebClient.builder();
+    }
+
     // 2. 큐(Job ID) 관리용 템플릿 (String 전용)
     @Bean
     public RedisTemplate<String, String> queueRedisTemplate(RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, String> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
 
-        template.setKeySerializer(RedisSerializer.string());
-        template.setValueSerializer(RedisSerializer.string());
+        template.setKeySerializer(new StringRedisSerializer());
+        template.setValueSerializer(new StringRedisSerializer());
 
         template.afterPropertiesSet();
         return template;
     }
 
+    // 3. Lettuce 전용 ConnectionFactory (Redisson과 분리)
+    @Bean
+    public LettuceConnectionFactory lettuceConnectionFactory(
+            @Value("${REDIS_HOST}") String host,
+            @Value("${REDIS_PORT}") int port,
+            @Value("${REDIS_PASSWORD}") String password
+    ) {
+        RedisStandaloneConfiguration config = new RedisStandaloneConfiguration(host, port);
+        if (!password.isBlank()) config.setPassword(password);
+        return new LettuceConnectionFactory(config);
+    }
+
+    // 4. RefreshToken 등 단순 String 저장용 - Lettuce 기반
+    @Bean
+    public StringRedisTemplate stringRedisTemplate(LettuceConnectionFactory lettuceConnectionFactory) {
+        StringRedisTemplate template = new StringRedisTemplate();
+        template.setConnectionFactory(lettuceConnectionFactory);
+        template.afterPropertiesSet();
+        return template;
+    }
 
 }

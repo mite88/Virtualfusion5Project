@@ -23,6 +23,8 @@ public class Member {
 
     private String email;
 
+    private String providerId; // OAuth2 (e.g. google sub)
+
     @Enumerated(EnumType.STRING)
     private Role role;
 
@@ -30,16 +32,14 @@ public class Member {
     private LocalDateTime updatedAt;
 
     @Builder
-    public Member(String username, String password, String email) {
+    public Member(String username, String password, String email, String providerId) {
         this.username = username;
         this.password = password;
         this.email = email;
-
+        this.providerId = providerId;
         this.role = Role.MEMBER;
-
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
-
     }
 
 

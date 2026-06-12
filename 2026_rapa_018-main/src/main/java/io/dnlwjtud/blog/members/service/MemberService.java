@@ -33,6 +33,7 @@ public class MemberService implements UserDetailsService {
                 .username(request.username())
                 .password(encodedPassword)
                 .email(request.email())
+                .providerId(null)
                 .build();
 
         Member saved = repository.save(member);
