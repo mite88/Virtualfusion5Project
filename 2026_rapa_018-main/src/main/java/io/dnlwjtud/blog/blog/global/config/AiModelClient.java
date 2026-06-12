@@ -23,15 +23,15 @@ import java.time.Duration;
 @RequiredArgsConstructor
 public class AiModelClient {
 
-    private final ClientConfig webClientBuilder;
+    private final WebClient.Builder webClientBuilder;
 
-    @Value("${ai.model.url}")
+    @Value("${AI_MODEL_URL}")
     private String aiModelUrl;
 
-    @Value("${ai.model.endpoint:/predict}")
+    @Value("${AI_MODEL_ENDPOINT:/predict}")
     private String aiModelEndpoint;
 
-    @Value("${ai.model.timeout:5s}")
+    @Value("${AI_MODEL_TIMEOUT:5s}")
     private Duration timeout;
 
     public Object callModel(String input) {
