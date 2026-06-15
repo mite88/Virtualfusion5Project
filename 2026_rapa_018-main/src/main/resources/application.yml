@@ -3,7 +3,7 @@ spring:
     name: blog
 
   profiles:
-    active: h2,redis,dev
+    active: mysql,redis,dev
 
   security:
     oauth2:

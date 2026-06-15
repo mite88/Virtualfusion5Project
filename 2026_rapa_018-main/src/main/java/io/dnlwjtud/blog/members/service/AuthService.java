@@ -48,7 +48,7 @@ public class AuthService {
                 .orElseThrow(() -> new BadCredentialsException("만료되었거나 로그아웃된 RefreshToken입니다."));
 
         if (!stored.equals(refreshToken)) {
-            throw new BadCredentialsException("RefreshToken이 일치하지 않습니다.");
+            throw new BadCredentialsException("제공된 RefreshToken이 현재 유효한 RefreshToken과 일치하지 않습니다. 이미 갱신되었거나 잘못된 토큰입니다.");
         }
 
         MemberDetails details = (MemberDetails) memberService.loadUserByUsername(username);

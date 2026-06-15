@@ -1,10 +1,13 @@
 package io.dnlwjtud.blog.blog.global.service;
 
 import io.dnlwjtud.blog.blog.global.model.AiJob;
+import io.dnlwjtud.blog.blog.global.model.AiJobLog;
+import io.dnlwjtud.blog.blog.global.repository.AiJobLogRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -30,29 +33,26 @@ public class JobService {
     // 큐 관리용 템플릿 (String 전용 - 에러 해결의 핵심)
     private final RedisTemplate<String, String> queueRedisTemplate;
 
-<<<<<<< HEAD
+    private final AiJobLogRepository aiJobLogRepository; // AiJobLogRepository 주입
+
     public JobService(
             @Qualifier("redisTemplate") RedisTemplate<String, AiJob> redisTemplate,
-            @Qualifier("queueRedisTemplate") RedisTemplate<String, String> queueRedisTemplate
+            @Qualifier("queueRedisTemplate") RedisTemplate<String, String> queueRedisTemplate,
+            AiJobLogRepository aiJobLogRepository
     ) {
         this.redisTemplate = redisTemplate;
         this.queueRedisTemplate = queueRedisTemplate;
+        this.aiJobLogRepository = aiJobLogRepository;
     }
 
-    @Value("${custom.job.queue.key}")
-    private String queueKey;
-    @Value("${custom.job.queue.prefix}")
-    private String jobPrefix;
-    @Value("${custom.job.queue.ttl}")
-=======
     @Value("${AI_JOB_QUEUE_KEY}")
     private String queueKey;
     @Value("${AI_JOB_QUEUE_PREFIX}")
     private String jobPrefix;
     @Value("${AI_JOB_QUEUE_TTL}")
->>>>>>> 1c874ab668465e2fe8b05767c841230044bbc07e
     private long ttl;
 
+    @Transactional
     public String submitJob(String input) {
         String jobId = UUID.randomUUID().toString();
 
@@ -70,6 +70,9 @@ public class JobService {
         // 2. 큐에 jobId 삽입 (String 타입으로 저장)
         queueRedisTemplate.opsForList().rightPush(queueKey, jobId);
 
+        // 3. 로그 기록
+        saveJobLog(jobId, "PENDING", "Job submitted");
+
         return jobId;
     }
 
@@ -77,6 +80,7 @@ public class JobService {
         return redisTemplate.opsForValue().get(jobPrefix + jobId);
     }
 
+    @Transactional
     public void updateJob(AiJob job) {
         // record는 불변이므로 빌더로 새로 생성하여 덮어쓰기
         AiJob updatedJob = AiJob.builder()
@@ -90,5 +94,19 @@ public class JobService {
                 .build();
 
         redisTemplate.opsForValue().set(jobPrefix + job.jobId(), updatedJob, ttl, TimeUnit.SECONDS);
+
+        // 로그 기록
+        saveJobLog(updatedJob.jobId(), updatedJob.status(), updatedJob.errorMessage());
+    }
+
+    @Transactional
+    private void saveJobLog(String jobId, String status, String message) {
+        AiJobLog log = AiJobLog.builder()
+                .jobId(jobId)
+                .status(status)
+                .message(message)
+                .timestamp(LocalDateTime.now()) // @PrePersist로 자동 설정되지만 명시적으로 설정
+                .build();
+        aiJobLogRepository.save(log);
     }
 }

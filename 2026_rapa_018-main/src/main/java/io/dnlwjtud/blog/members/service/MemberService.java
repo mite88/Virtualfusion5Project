@@ -13,7 +13,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -47,14 +46,16 @@ public class MemberService implements UserDetailsService {
         Optional<Member> memberOptional = repository.findByUsername(username);
 
         Member member = memberOptional.orElseThrow(
-                () -> new NoSuchElementException()
+                () -> new UsernameNotFoundException("User not found with username: " + username)
         );
 
         return MemberMapper.toDetails(member);
     }
 
     public Member findByUsername(String username) {
-        return repository.findByUsername(username).orElseThrow();
+        return repository.findByUsername(username).orElseThrow(
+                () -> new UsernameNotFoundException("User not found with username: " + username)
+        );
     }
 
 }

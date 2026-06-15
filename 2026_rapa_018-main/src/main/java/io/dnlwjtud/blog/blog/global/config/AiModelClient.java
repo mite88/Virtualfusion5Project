@@ -25,11 +25,9 @@ public class AiModelClient {
 
     private final WebClient.Builder webClientBuilder;
 
-<<<<<<< HEAD
-    @Value("${ai.model.url:${AI_MODEL_URL:http://localhost:8000}}")
-=======
+
     @Value("${AI_MODEL_URL}")
->>>>>>> 1c874ab668465e2fe8b05767c841230044bbc07e
+
     private String aiModelUrl;
 
     @Value("${AI_MODEL_ENDPOINT:/predict}")

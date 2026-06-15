@@ -11,12 +11,17 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: ${JPA_DDL_AUTO:update}
+      ddl-auto: update # Flyway가 스키마를 관리하므로 none으로 설정
     database-platform: org.hibernate.dialect.MySQLDialect
     properties:
       hibernate:
         format_sql: true
     show-sql: true
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true # 기존 데이터베이스가 있는 경우 마이그레이션 시작 시 베이스라인 설정
+    locations: classpath:db/migration # 마이그레이션 스크립트 위치
 
   h2:
     console:

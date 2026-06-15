@@ -13,7 +13,7 @@ public class MemberApiController{
 
     private final MemberService service;
 
-    @PostMapping({"/members", "/api/v1/auth/signup"})
+    @PostMapping("/members")
     public ResponseEntity<MemberDescription> saveMember(
          @RequestBody MemberSaveRequest request
     ){
