@@ -1,8 +1,7 @@
 package io.dnlwjtud.blog.blog.global.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dnlwjtud.blog.blog.global.model.AiJob;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -23,7 +22,6 @@ import java.util.concurrent.TimeUnit;
  * 26. 6. 12.        Admin       최초 생성
  */
 @Service
-@RequiredArgsConstructor
 public class JobService {
 
     // 데이터 저장용 템플릿 (AiJob 전용)
@@ -32,11 +30,19 @@ public class JobService {
     // 큐 관리용 템플릿 (String 전용 - 에러 해결의 핵심)
     private final RedisTemplate<String, String> queueRedisTemplate;
 
-    @Value("${job.queue.key}")
+    public JobService(
+            @Qualifier("redisTemplate") RedisTemplate<String, AiJob> redisTemplate,
+            @Qualifier("queueRedisTemplate") RedisTemplate<String, String> queueRedisTemplate
+    ) {
+        this.redisTemplate = redisTemplate;
+        this.queueRedisTemplate = queueRedisTemplate;
+    }
+
+    @Value("${custom.job.queue.key}")
     private String queueKey;
-    @Value("${job.queue.prefix}")
+    @Value("${custom.job.queue.prefix}")
     private String jobPrefix;
-    @Value("${job.queue.ttl}")
+    @Value("${custom.job.queue.ttl}")
     private long ttl;
 
     public String submitJob(String input) {

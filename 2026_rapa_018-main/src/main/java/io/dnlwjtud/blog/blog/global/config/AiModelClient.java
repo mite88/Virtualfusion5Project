@@ -23,9 +23,9 @@ import java.time.Duration;
 @RequiredArgsConstructor
 public class AiModelClient {
 
-    private final ClientConfig webClientBuilder;
+    private final WebClient.Builder webClientBuilder;
 
-    @Value("${ai.model.url}")
+    @Value("${ai.model.url:${AI_MODEL_URL:http://localhost:8000}}")
     private String aiModelUrl;
 
     @Value("${ai.model.endpoint:/predict}")

@@ -42,5 +42,16 @@ public class Member {
 
     }
 
+    public static Member oauthMember(String username, String email) {
+        Member member = new Member();
+        member.username = username;
+        member.password = "";
+        member.email = email;
+        member.role = Role.MEMBER;
+        member.createdAt = LocalDateTime.now();
+        member.updatedAt = LocalDateTime.now();
+        return member;
+    }
+
 
 }

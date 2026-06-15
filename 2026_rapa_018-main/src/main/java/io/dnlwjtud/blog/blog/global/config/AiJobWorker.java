@@ -2,9 +2,9 @@ package io.dnlwjtud.blog.blog.global.config;
 
 import io.dnlwjtud.blog.blog.global.model.AiJob;
 import io.dnlwjtud.blog.blog.global.service.JobService;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -25,25 +25,33 @@ import java.time.LocalDateTime;
  * 26. 6. 12.        Admin       최초 생성
  */
 @Component
-@RequiredArgsConstructor
 @Slf4j
 @EnableScheduling
 public class AiJobWorker {
 
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final RedisTemplate<String, String> queueRedisTemplate;
     private final JobService jobService;
     private final AiModelClient aiModelClient;
 
-    @Value("${job.queue.key}")
+    public AiJobWorker(
+            @Qualifier("queueRedisTemplate") RedisTemplate<String, String> queueRedisTemplate,
+            JobService jobService,
+            AiModelClient aiModelClient
+    ) {
+        this.queueRedisTemplate = queueRedisTemplate;
+        this.jobService = jobService;
+        this.aiModelClient = aiModelClient;
+    }
+
+    @Value("${custom.job.queue.key}")
     private String queueKey;
 
-    @Scheduled(fixedDelayString = "${job.worker.delay}")
+    @Scheduled(fixedDelayString = "${custom.job.worker.delay}")
     public void processQueue() {
         // LPOP: 큐에서 꺼내기 (없으면 null)
-        Object raw = redisTemplate.opsForList().leftPop(queueKey);
-        if (raw == null) return;
+        String jobId = queueRedisTemplate.opsForList().leftPop(queueKey);
+        if (jobId == null) return;
 
-        String jobId = raw.toString();
         AiJob job = jobService.getJob(jobId);
         if (job == null) {
             log.warn("Job not found: {}", jobId);
