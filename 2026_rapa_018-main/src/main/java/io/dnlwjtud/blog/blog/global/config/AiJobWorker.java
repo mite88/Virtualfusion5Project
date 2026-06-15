@@ -3,6 +3,7 @@ package io.dnlwjtud.blog.blog.global.config;
 import io.dnlwjtud.blog.blog.global.model.AiJob;
 import io.dnlwjtud.blog.blog.global.service.JobService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -29,11 +30,16 @@ import java.time.LocalDateTime;
 @EnableScheduling
 public class AiJobWorker {
 
+<<<<<<< HEAD
     private final RedisTemplate<String, String> queueRedisTemplate;
+=======
+    private final RedisTemplate<String, String> redisTemplate;
+>>>>>>> 1c874ab668465e2fe8b05767c841230044bbc07e
     private final JobService jobService;
     private final AiModelClient aiModelClient;
 
     public AiJobWorker(
+<<<<<<< HEAD
             @Qualifier("queueRedisTemplate") RedisTemplate<String, String> queueRedisTemplate,
             JobService jobService,
             AiModelClient aiModelClient
@@ -47,6 +53,20 @@ public class AiJobWorker {
     private String queueKey;
 
     @Scheduled(fixedDelayString = "${custom.job.worker.delay}")
+=======
+            @Qualifier("queueRedisTemplate") RedisTemplate<String, String> redisTemplate,
+            JobService jobService,
+            AiModelClient aiModelClient
+    ) {
+        this.redisTemplate = redisTemplate;
+        this.jobService = jobService;
+        this.aiModelClient = aiModelClient;
+    }
+    @Value("${AI_JOB_QUEUE_KEY}")
+    private String queueKey;
+
+    @Scheduled(fixedDelayString = "${AI_JOB_WORKER_DELAY}")
+>>>>>>> 1c874ab668465e2fe8b05767c841230044bbc07e
     public void processQueue() {
         // LPOP: 큐에서 꺼내기 (없으면 null)
         String jobId = queueRedisTemplate.opsForList().leftPop(queueKey);

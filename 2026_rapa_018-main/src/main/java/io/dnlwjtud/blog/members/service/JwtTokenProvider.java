@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.Map;
-import java.util.Set;
 
 @Slf4j
 @Service
@@ -32,14 +31,14 @@ public class JwtTokenProvider {
                 .expiration(new Date(new Date().getTime() + validateTime))
                 .signWith(getSecretKey());
 
-        Set<Map.Entry<String, Object>> claimEntry = claims.entrySet();
-
-        for (Map.Entry<String, Object> claim : claimEntry) {
-            jwtBuilder.claim(claim.getKey(), claim.getValue());
-        }
+        claims.forEach(jwtBuilder::claim);
 
         return jwtBuilder.compact();
 
+    }
+
+    public String issueRefreshToken(long validateTime, String username) {
+        return issue(validateTime, Map.of("username", username, "type", "refresh"));
     }
 
     public boolean validate(String token) {

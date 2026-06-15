@@ -1,10 +1,18 @@
 package io.dnlwjtud.blog.members.config;
 
 import io.dnlwjtud.blog.members.config.filter.TokenAuthenticationFilter;
+<<<<<<< HEAD
 import io.dnlwjtud.blog.members.service.GoogleOAuth2MemberService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.ObjectProvider;
+=======
+import io.dnlwjtud.blog.members.config.handler.OAuth2SuccessHandler;
+import io.dnlwjtud.blog.members.service.OAuth2MemberService;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
+>>>>>>> 1c874ab668465e2fe8b05767c841230044bbc07e
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -21,9 +29,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final TokenAuthenticationFilter tokenAuthenticationFilter;
+    private final OAuth2MemberService oAuth2MemberService;
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
 
     @Bean
     public SecurityFilterChain filterChain(
+<<<<<<< HEAD
             HttpSecurity http
             , AuthenticationSuccessHandler successHandler
             , AuthenticationFailureHandler failureHandler
@@ -36,19 +47,36 @@ public class SecurityConfig {
                 .cors(cors -> cors.disable()) // cors disable
                 .headers(
                         headers -> headers.frameOptions(frame -> frame.disable())
+=======
+            HttpSecurity http,
+            @Qualifier("authenticationSuccessHandlerImpl") AuthenticationSuccessHandler successHandler,
+            AuthenticationFailureHandler failureHandler
+    ) throws Exception {
+        return http
+                .httpBasic(basic -> basic.disable())
+                .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.disable())
+                .headers(headers -> headers.frameOptions(frame -> frame.disable()))
+                .formLogin(f -> f
+                        .successHandler(successHandler)
+                        .failureHandler(failureHandler)
+>>>>>>> 1c874ab668465e2fe8b05767c841230044bbc07e
                 )
-                .formLogin(
-                        f -> f.successHandler(successHandler)
-                                .failureHandler(failureHandler)
+                .oauth2Login(oauth -> oauth
+                        .userInfoEndpoint(ui -> ui.userService(oAuth2MemberService))
+                        .successHandler(oAuth2SuccessHandler)
                 )
+<<<<<<< HEAD
 
                 .sessionManagement( config -> config.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) )
 
+=======
+                .sessionManagement(config -> config.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+>>>>>>> 1c874ab668465e2fe8b05767c841230044bbc07e
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(
-                        (req, resp, e) -> {
-                            resp.sendError(HttpServletResponse.SC_UNAUTHORIZED, "인증에 실패하였습니다!");
-                        }
+                        (req, resp, e) -> resp.sendError(HttpServletResponse.SC_UNAUTHORIZED, "인증에 실패하였습니다!")
                 ))
+<<<<<<< HEAD
 
                 .authorizeHttpRequests(
                         auth -> auth
@@ -80,6 +108,20 @@ public class SecurityConfig {
 
         return security.build();
 
+=======
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers("/api/v1/auth/signup", "/api/v1/auth/login", "/api/v1/auth/refresh").permitAll()
+                        .requestMatchers("/api/v1/auth/logout").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/posts/**").permitAll()
+                        .requestMatchers("/posts/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/members").permitAll()
+                        .requestMatchers("/members/**").authenticated()
+                        .anyRequest().permitAll()
+                )
+                .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .build();
+>>>>>>> 1c874ab668465e2fe8b05767c841230044bbc07e
     }
 
 }

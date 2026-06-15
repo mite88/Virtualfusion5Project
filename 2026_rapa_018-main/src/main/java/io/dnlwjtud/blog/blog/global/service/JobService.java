@@ -30,6 +30,7 @@ public class JobService {
     // 큐 관리용 템플릿 (String 전용 - 에러 해결의 핵심)
     private final RedisTemplate<String, String> queueRedisTemplate;
 
+<<<<<<< HEAD
     public JobService(
             @Qualifier("redisTemplate") RedisTemplate<String, AiJob> redisTemplate,
             @Qualifier("queueRedisTemplate") RedisTemplate<String, String> queueRedisTemplate
@@ -43,6 +44,13 @@ public class JobService {
     @Value("${custom.job.queue.prefix}")
     private String jobPrefix;
     @Value("${custom.job.queue.ttl}")
+=======
+    @Value("${AI_JOB_QUEUE_KEY}")
+    private String queueKey;
+    @Value("${AI_JOB_QUEUE_PREFIX}")
+    private String jobPrefix;
+    @Value("${AI_JOB_QUEUE_TTL}")
+>>>>>>> 1c874ab668465e2fe8b05767c841230044bbc07e
     private long ttl;
 
     public String submitJob(String input) {
