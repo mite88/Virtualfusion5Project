@@ -71,7 +71,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v6
         with:
-          images: ${{env.REGISTRY}}/${{github.actor}}/${{github.repository}}
+          images: ${{env.REGISTRY}}/${{github.repository}}
           tags: |
             type=sha
             type=raw,value=${{needs.tagging.outputs.tag_name}}
@@ -80,7 +80,7 @@ jobs:
       - name: 빌드 및 푸시
         uses: docker/build-push-action@v7
         with:
-          context: .
+          context: ./app_ci
           push: true
           tags: ${{steps.meta.outputs.tags}}
 
