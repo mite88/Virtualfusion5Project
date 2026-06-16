@@ -1,6 +1,9 @@
 package io.dnlwjtud.blog.blog.global.config;
 
 import io.dnlwjtud.blog.blog.global.model.AiJob;
+import org.redisson.Redisson;
+import org.redisson.api.RedissonClient;
+import org.redisson.config.Config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -16,6 +19,16 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
 public class RedisConfig {
+
+    @Value("${REDIS_HOST}")
+    private String redisHost;
+
+    @Value("${REDIS_PORT}")
+    private int redisPort;
+
+    // REDIS_PASSWORD가 없거나 비어있을 경우 빈 문자열("")을 기본값으로 사용
+    @Value("${REDIS_PASSWORD:}")
+    private String redisPassword;
 
     // 1. AiJob 객체 저장용 템플릿
     @Bean
@@ -56,13 +69,11 @@ public class RedisConfig {
 
     // 3. Lettuce 전용 ConnectionFactory (Redisson과 분리)
     @Bean
-    public LettuceConnectionFactory lettuceConnectionFactory(
-            @Value("${REDIS_HOST}") String host,
-            @Value("${REDIS_PORT}") int port,
-            @Value("${REDIS_PASSWORD}") String password
-    ) {
-        RedisStandaloneConfiguration config = new RedisStandaloneConfiguration(host, port);
-        if (!password.isBlank()) config.setPassword(password);
+    public LettuceConnectionFactory lettuceConnectionFactory() {
+        RedisStandaloneConfiguration config = new RedisStandaloneConfiguration(redisHost, redisPort);
+        if (redisPassword != null && !redisPassword.isBlank()) {
+            config.setPassword(redisPassword);
+        }
         return new LettuceConnectionFactory(config);
     }
 
@@ -75,4 +86,18 @@ public class RedisConfig {
         return template;
     }
 
+    // 5. RedissonClient 빈 정의
+    @Bean(destroyMethod = "shutdown")
+    public RedissonClient redissonClient() {
+        Config config = new Config();
+        config.useSingleServer()
+              .setAddress("redis://" + redisHost + ":" + redisPort);
+
+        // 비밀번호가 null이 아니고 비어있지 않을 때만 비밀번호를 설정
+        if (redisPassword != null && !redisPassword.isBlank()) {
+            config.useSingleServer().setPassword(redisPassword);
+        }
+        // redisPassword가 null이거나 비어있으면 setPassword()를 호출하지 않음
+        return Redisson.create(config);
+    }
 }
