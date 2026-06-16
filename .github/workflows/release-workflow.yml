@@ -4,7 +4,7 @@ on:
   push:
     branches: [dev, main]
     paths:
-      - '2026_rapa_018-main/**' # 소스 코드가 있는 폴더 변경 시 동작
+      - '2026_rapa_018-main/**'
   pull_request:
     branches: [dev, main]
     paths:
@@ -12,7 +12,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  SOURCE_DIR: 2026_rapa_018-main # 소스 코드 폴더명
+  SOURCE_DIR: 2026_rapa_018-main
 
 jobs:
   code-test:
@@ -26,6 +26,11 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '25'
+      
+      # 💡 권한 설정 추가
+      - name: gradlew 실행 권한 부여
+        run: chmod +x gradlew
+
       - name: 테스트 실행
         run: ./gradlew test --no-daemon
 
@@ -82,12 +87,12 @@ jobs:
           tags: |
             type=sha
             type=raw,value=${{ needs.tagging.outputs.tag_name }}
-            type=raw,value=latest
+            type=latest
 
       - name: 빌드 및 푸시
         uses: docker/build-push-action@v7
         with:
-          context: .           # Dockerfile이 루트에 있으므로 루트를 컨텍스트로 지정
-          file: ./Dockerfile   # 루트의 Dockerfile 사용
+          context: .
+          file: ./Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
