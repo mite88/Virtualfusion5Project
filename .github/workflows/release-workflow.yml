@@ -80,7 +80,7 @@ jobs:
       - name: 빌드 및 푸시
         uses: docker/build-push-action@v7
         with:
-          context: ./app_ci
+          context: ./Dockerfile
           push: true
           tags: ${{steps.meta.outputs.tags}}
 
