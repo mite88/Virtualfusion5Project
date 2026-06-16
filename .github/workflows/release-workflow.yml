@@ -13,6 +13,8 @@ jobs:
   tagging:
     name : 태깅
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # 💡 필수: 태그 생성 권한
     outputs:
       tag_name: ${{ steps.tag_version.outputs.new_version }}
     steps:
