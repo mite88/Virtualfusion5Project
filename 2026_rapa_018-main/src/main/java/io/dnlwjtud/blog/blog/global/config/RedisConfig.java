@@ -1,9 +1,6 @@
 package io.dnlwjtud.blog.blog.global.config;
 
 import io.dnlwjtud.blog.blog.global.model.AiJob;
-import org.redisson.Redisson;
-import org.redisson.api.RedissonClient;
-import org.redisson.config.Config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -67,7 +64,6 @@ public class RedisConfig {
         return template;
     }
 
-    // 3. Lettuce 전용 ConnectionFactory (Redisson과 분리)
     @Bean
     public LettuceConnectionFactory lettuceConnectionFactory() {
         RedisStandaloneConfiguration config = new RedisStandaloneConfiguration(redisHost, redisPort);
@@ -84,20 +80,5 @@ public class RedisConfig {
         template.setConnectionFactory(lettuceConnectionFactory);
         template.afterPropertiesSet();
         return template;
-    }
-
-    // 5. RedissonClient 빈 정의
-    @Bean(destroyMethod = "shutdown")
-    public RedissonClient redissonClient() {
-        Config config = new Config();
-        config.useSingleServer()
-              .setAddress("redis://" + redisHost + ":" + redisPort);
-
-        // 비밀번호가 null이 아니고 비어있지 않을 때만 비밀번호를 설정
-        if (redisPassword != null && !redisPassword.isBlank()) {
-            config.useSingleServer().setPassword(redisPassword);
-        }
-        // redisPassword가 null이거나 비어있으면 setPassword()를 호출하지 않음
-        return Redisson.create(config);
     }
 }

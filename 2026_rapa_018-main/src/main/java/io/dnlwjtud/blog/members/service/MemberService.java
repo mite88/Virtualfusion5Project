@@ -1,5 +1,7 @@
 package io.dnlwjtud.blog.members.service;
 
+import io.dnlwjtud.blog.blog.global.code.ResponseCode;
+import io.dnlwjtud.blog.blog.global.exception.BusinessException;
 import io.dnlwjtud.blog.members.dto.MemberDescription;
 import io.dnlwjtud.blog.members.dto.MemberSaveRequest;
 import io.dnlwjtud.blog.members.entity.Member;
@@ -25,6 +27,12 @@ public class MemberService implements UserDetailsService {
 
     @Transactional
     public MemberDescription save(MemberSaveRequest request) {
+        if (repository.findByUsername(request.username()).isPresent()) {
+            throw new BusinessException(ResponseCode.DUPLICATE_USERNAME);
+        }
+        if (repository.findByEmail(request.email()).isPresent()) {
+            throw new BusinessException(ResponseCode.DUPLICATE_EMAIL);
+        }
 
         String encodedPassword = passwordEncoder.encode(request.password());
 

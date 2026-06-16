@@ -7,6 +7,7 @@ public class PostMapper {
 
     public static PostDescription toDescription(Posts entity) {
         return new PostDescription(
+                entity.getId(),
                 entity.getTitle(),
                 entity.getContent(),
                 entity.getAuthor().getUsername(),

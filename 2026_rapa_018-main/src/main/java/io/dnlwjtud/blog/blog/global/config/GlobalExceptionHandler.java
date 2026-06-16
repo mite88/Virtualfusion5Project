@@ -1,9 +1,10 @@
 package io.dnlwjtud.blog.blog.global.config;
 
+import io.dnlwjtud.blog.blog.global.code.ResponseCode;
 import io.dnlwjtud.blog.blog.global.dto.CommonResponse;
-import org.springframework.http.HttpStatus;
+import io.dnlwjtud.blog.blog.global.exception.BusinessException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -11,34 +12,33 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<CommonResponse<Void>> handleBadCredentialsException(BadCredentialsException e) {
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<CommonResponse<Void>> handleBusinessException(BusinessException e) {
+        ResponseCode responseCode = e.getResponseCode();
         return ResponseEntity
-                .status(HttpStatus.UNAUTHORIZED)
-                .body(CommonResponse.fail(e.getMessage()));
+                .status(responseCode.getHttpStatus())
+                .body(CommonResponse.fail(responseCode, e.getMessage()));
     }
 
     @ExceptionHandler(UsernameNotFoundException.class)
     public ResponseEntity<CommonResponse<Void>> handleUsernameNotFoundException(UsernameNotFoundException e) {
         return ResponseEntity
-                .status(HttpStatus.UNAUTHORIZED)
-                .body(CommonResponse.fail(e.getMessage()));
+                .status(ResponseCode.USER_NOT_FOUND.getHttpStatus())
+                .body(CommonResponse.fail(ResponseCode.USER_NOT_FOUND));
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<CommonResponse<Void>> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
+        return ResponseEntity
+                .status(ResponseCode.DUPLICATE_MEMBER.getHttpStatus())
+                .body(CommonResponse.fail(ResponseCode.DUPLICATE_MEMBER));
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<CommonResponse<Void>> handleGeneralException(Exception e) {
-        System.out.println("=== EXCEPTION CAUGHT BY handleGeneralException ===");
-        System.out.println("Class: " + e.getClass().getName());
-        System.out.println("ClassLoader: " + e.getClass().getClassLoader());
-        System.out.println("Message: " + e.getMessage());
-        if (e.getCause() != null) {
-            System.out.println("Cause Class: " + e.getCause().getClass().getName());
-            System.out.println("Cause ClassLoader: " + e.getCause().getClass().getClassLoader());
-            System.out.println("Cause Message: " + e.getCause().getMessage());
-        }
         e.printStackTrace();
         return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(CommonResponse.fail("An unexpected error occurred: " + e.getMessage()));
+                .status(ResponseCode.INTERNAL_SERVER_ERROR.getHttpStatus())
+                .body(CommonResponse.fail(ResponseCode.INTERNAL_SERVER_ERROR));
     }
 }

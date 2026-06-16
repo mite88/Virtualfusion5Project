@@ -1,10 +1,10 @@
-package io.dnlwjtud.blog.blog.global;
+package io.dnlwjtud.blog.blog.global.controller;
 
+import io.dnlwjtud.blog.blog.global.code.ResponseCode;
 import io.dnlwjtud.blog.blog.global.dto.CommonResponse;
 import io.dnlwjtud.blog.blog.global.model.AiJob;
 import io.dnlwjtud.blog.blog.global.service.JobService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,8 +35,9 @@ public class AiJobController {
 
         String input = body.get("input");
         if (input == null || input.isBlank()) {
-            return ResponseEntity.badRequest()
-                    .body(CommonResponse.fail("Input is required"));
+            return ResponseEntity
+                    .status(ResponseCode.INPUT_REQUIRED.getHttpStatus())
+                    .body(CommonResponse.fail(ResponseCode.INPUT_REQUIRED));
         }
 
         String jobId = jobService.submitJob(input);
@@ -49,8 +50,9 @@ public class AiJobController {
     public ResponseEntity<CommonResponse<AiJob>> getJob(@PathVariable String jobId) {
         AiJob job = jobService.getJob(jobId);
         if (job == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(CommonResponse.fail("Job not found: " + jobId));
+            return ResponseEntity
+                    .status(ResponseCode.JOB_NOT_FOUND.getHttpStatus())
+                    .body(CommonResponse.fail(ResponseCode.JOB_NOT_FOUND, ResponseCode.JOB_NOT_FOUND.getMessage() + ": " + jobId));
         }
         return ResponseEntity.ok(CommonResponse.success(job));
     }
