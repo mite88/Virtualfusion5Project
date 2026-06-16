@@ -29,29 +29,31 @@ import java.time.LocalDateTime;
 @EnableScheduling
 public class AiJobWorker {
 
-    private final RedisTemplate<String, String> redisTemplate;
+
+    private final RedisTemplate<String, String> queueRedisTemplate;
+
     private final JobService jobService;
     private final AiModelClient aiModelClient;
 
     public AiJobWorker(
-            @Qualifier("queueRedisTemplate") RedisTemplate<String, String> redisTemplate,
+            @Qualifier("queueRedisTemplate") RedisTemplate<String, String> queueRedisTemplate,
             JobService jobService,
             AiModelClient aiModelClient
     ) {
-        this.redisTemplate = redisTemplate;
+        this.queueRedisTemplate = queueRedisTemplate;
         this.jobService = jobService;
         this.aiModelClient = aiModelClient;
     }
+
     @Value("${AI_JOB_QUEUE_KEY}")
     private String queueKey;
 
     @Scheduled(fixedDelayString = "${AI_JOB_WORKER_DELAY}")
     public void processQueue() {
         // LPOP: 큐에서 꺼내기 (없으면 null)
-        Object raw = redisTemplate.opsForList().leftPop(queueKey);
-        if (raw == null) return;
+        String jobId = queueRedisTemplate.opsForList().leftPop(queueKey);
+        if (jobId == null) return;
 
-        String jobId = raw.toString();
         AiJob job = jobService.getJob(jobId);
         if (job == null) {
             log.warn("Job not found: {}", jobId);

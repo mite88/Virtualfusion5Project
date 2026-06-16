@@ -29,5 +29,4 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
                 "{\"accessToken\":\"" + tokens.accessToken() + "\",\"refreshToken\":\"" + tokens.refreshToken() + "\"}"
         );
     }
-
 }

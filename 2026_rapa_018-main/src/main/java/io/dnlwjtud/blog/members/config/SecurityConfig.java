@@ -3,14 +3,15 @@ package io.dnlwjtud.blog.members.config;
 import io.dnlwjtud.blog.members.config.filter.TokenAuthenticationFilter;
 import io.dnlwjtud.blog.members.config.handler.OAuth2SuccessHandler;
 import io.dnlwjtud.blog.members.service.OAuth2MemberService;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -28,9 +29,10 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(
             HttpSecurity http,
             @Qualifier("authenticationSuccessHandlerImpl") AuthenticationSuccessHandler successHandler,
-            AuthenticationFailureHandler failureHandler
+            AuthenticationFailureHandler failureHandler,
+            ObjectProvider<ClientRegistrationRepository> clientRegistrationRepository
     ) throws Exception {
-        return http
+        HttpSecurity security = http
                 .httpBasic(basic -> basic.disable())
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.disable())
@@ -39,16 +41,13 @@ public class SecurityConfig {
                         .successHandler(successHandler)
                         .failureHandler(failureHandler)
                 )
-                .oauth2Login(oauth -> oauth
-                        .userInfoEndpoint(ui -> ui.userService(oAuth2MemberService))
-                        .successHandler(oAuth2SuccessHandler)
-                )
-                .sessionManagement(config -> config.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(config -> config.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(
-                        (req, resp, e) -> resp.sendError(HttpServletResponse.SC_UNAUTHORIZED, "인증에 실패하였습니다!")
+                        (req, resp, e) -> { /* GlobalExceptionHandler will handle this */ }
                 ))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers("/oauth2/**", "/login/oauth2/**").permitAll()
                         .requestMatchers("/api/v1/auth/signup", "/api/v1/auth/login", "/api/v1/auth/refresh").permitAll()
                         .requestMatchers("/api/v1/auth/logout").authenticated()
                         .requestMatchers(HttpMethod.GET, "/posts/**").permitAll()
@@ -57,8 +56,16 @@ public class SecurityConfig {
                         .requestMatchers("/members/**").authenticated()
                         .anyRequest().permitAll()
                 )
-                .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .build();
-    }
+                .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
+        if (clientRegistrationRepository.getIfAvailable() != null) {
+            security.oauth2Login(oauth -> oauth
+                    .userInfoEndpoint(ui -> ui.userService(oAuth2MemberService))
+                    .successHandler(oAuth2SuccessHandler)
+                    .failureHandler(failureHandler)
+            );
+        }
+
+        return security.build();
+    }
 }

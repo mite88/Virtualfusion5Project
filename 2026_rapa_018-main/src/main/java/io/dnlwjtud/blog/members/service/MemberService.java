@@ -1,5 +1,7 @@
 package io.dnlwjtud.blog.members.service;
 
+import io.dnlwjtud.blog.blog.global.code.ResponseCode;
+import io.dnlwjtud.blog.blog.global.exception.BusinessException;
 import io.dnlwjtud.blog.members.dto.MemberDescription;
 import io.dnlwjtud.blog.members.dto.MemberSaveRequest;
 import io.dnlwjtud.blog.members.entity.Member;
@@ -13,7 +15,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -26,6 +27,12 @@ public class MemberService implements UserDetailsService {
 
     @Transactional
     public MemberDescription save(MemberSaveRequest request) {
+        if (repository.findByUsername(request.username()).isPresent()) {
+            throw new BusinessException(ResponseCode.DUPLICATE_USERNAME);
+        }
+        if (repository.findByEmail(request.email()).isPresent()) {
+            throw new BusinessException(ResponseCode.DUPLICATE_EMAIL);
+        }
 
         String encodedPassword = passwordEncoder.encode(request.password());
 
@@ -47,14 +54,16 @@ public class MemberService implements UserDetailsService {
         Optional<Member> memberOptional = repository.findByUsername(username);
 
         Member member = memberOptional.orElseThrow(
-                () -> new NoSuchElementException()
+                () -> new UsernameNotFoundException("User not found with username: " + username)
         );
 
         return MemberMapper.toDetails(member);
     }
 
     public Member findByUsername(String username) {
-        return repository.findByUsername(username).orElseThrow();
+        return repository.findByUsername(username).orElseThrow(
+                () -> new UsernameNotFoundException("User not found with username: " + username)
+        );
     }
 
 }

@@ -25,7 +25,9 @@ public class AiModelClient {
 
     private final WebClient.Builder webClientBuilder;
 
+
     @Value("${AI_MODEL_URL}")
+
     private String aiModelUrl;
 
     @Value("${AI_MODEL_ENDPOINT:/predict}")

@@ -32,14 +32,25 @@ public class Member {
     private LocalDateTime updatedAt;
 
     @Builder
-    public Member(String username, String password, String email, String providerId) {
+    public Member(String username, String password, String email, String providerId, Role role) { // role 인자 추가
         this.username = username;
         this.password = password;
         this.email = email;
         this.providerId = providerId;
-        this.role = Role.MEMBER;
+        this.role = (role != null) ? role : Role.MEMBER; // role이 제공되면 사용, 아니면 기본값 MEMBER
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
+    }
+
+    public static Member oauthMember(String username, String email) {
+        Member member = new Member();
+        member.username = username;
+        member.password = "";
+        member.email = email;
+        member.role = Role.MEMBER;
+        member.createdAt = LocalDateTime.now();
+        member.updatedAt = LocalDateTime.now();
+        return member;
     }
 
 

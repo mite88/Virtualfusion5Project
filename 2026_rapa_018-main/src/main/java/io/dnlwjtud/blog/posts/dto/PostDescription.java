@@ -7,6 +7,8 @@ import java.time.LocalDateTime;
 
 public record PostDescription(
 
+        Long id,
+
         @Schema(
                 description = "게시물 제목",
                 example = "제목 1"

@@ -17,6 +17,16 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Configuration
 public class RedisConfig {
 
+    @Value("${REDIS_HOST}")
+    private String redisHost;
+
+    @Value("${REDIS_PORT}")
+    private int redisPort;
+
+    // REDIS_PASSWORD가 없거나 비어있을 경우 빈 문자열("")을 기본값으로 사용
+    @Value("${REDIS_PASSWORD:}")
+    private String redisPassword;
+
     // 1. AiJob 객체 저장용 템플릿
     @Bean
     public RedisTemplate<String, AiJob> redisTemplate(RedisConnectionFactory connectionFactory) {
@@ -54,15 +64,12 @@ public class RedisConfig {
         return template;
     }
 
-    // 3. Lettuce 전용 ConnectionFactory (Redisson과 분리)
     @Bean
-    public LettuceConnectionFactory lettuceConnectionFactory(
-            @Value("${REDIS_HOST}") String host,
-            @Value("${REDIS_PORT}") int port,
-            @Value("${REDIS_PASSWORD}") String password
-    ) {
-        RedisStandaloneConfiguration config = new RedisStandaloneConfiguration(host, port);
-        if (!password.isBlank()) config.setPassword(password);
+    public LettuceConnectionFactory lettuceConnectionFactory() {
+        RedisStandaloneConfiguration config = new RedisStandaloneConfiguration(redisHost, redisPort);
+        if (redisPassword != null && !redisPassword.isBlank()) {
+            config.setPassword(redisPassword);
+        }
         return new LettuceConnectionFactory(config);
     }
 
@@ -74,5 +81,4 @@ public class RedisConfig {
         template.afterPropertiesSet();
         return template;
     }
-
 }

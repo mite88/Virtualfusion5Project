@@ -25,75 +25,51 @@ repositories {
 }
 
 dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.3'
 
-    // =======================================================
-    // 1. Web & API (웹 및 API 계층)
-    // =======================================================
-    implementation 'org.springframework.boot:spring-boot-starter-webmvc'        // 동기식 REST API 및 웹 컨트롤러
-    implementation 'org.springframework.boot:spring-boot-starter-webflux'       // 비동기 WebClient (외부 AI API 호출용)
-    implementation 'org.springframework.boot:spring-boot-starter-validation'    // DTO 유효성 검사 (@Valid, @NotNull 등)
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.3'    // Swagger UI (API 문서 자동화)
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
 
-    // =======================================================
-    // 2. Security & Authentication (보안 및 인증)
-    // =======================================================
-    implementation 'org.springframework.boot:spring-boot-starter-security'               // 스프링 시큐리티 기본
-    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'          // 소셜 로그인 (구글, 카카오 등)
-    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server' // JWT 토큰 기반 API 검증
-
-    // JJWT (서버에서 JWT 토큰 직접 생성 및 파싱)
     implementation 'io.jsonwebtoken:jjwt-api:0.13.0'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.13.0'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.13.0'
 
-    // =======================================================
-    // 3. Database & ORM (데이터베이스 및 마이그레이션)
-    // =======================================================
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa' // JPA (Hibernate)
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-flyway'
 
-    runtimeOnly 'com.mysql:mysql-connector-j'                              // 운영 환경용 MySQL 드라이버
-    runtimeOnly 'com.h2database:h2'                                        // 로컬/테스트 환경용 인메모리 DB
-    implementation 'org.springframework.boot:spring-boot-h2console'        // H2 DB 웹 콘솔 접근 도구
+    runtimeOnly 'com.mysql:mysql-connector-j'
+    runtimeOnly 'com.h2database:h2'
+    implementation 'org.springframework.boot:spring-boot-h2console'
+    implementation 'org.flywaydb:flyway-mysql'
 
-    implementation 'org.flywaydb:flyway-mysql'                             // DB 스키마 형상 관리 (Flyway)
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
-    // =======================================================
-    // 4. Redis (캐싱, 큐, 동시성 제어)
-    // =======================================================
-    implementation 'org.springframework.boot:spring-boot-starter-data-redis' // Redis 연결 및 기본 템플릿
-    implementation 'org.redisson:redisson-spring-boot-starter:4.4.0'         // 분산 락(Distributed Lock) 등 고도화된 Redis 기능
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:4.0.1'
+    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
 
-    // =======================================================
-    // 5. View & Template (프론트엔드 렌더링)
-    // =======================================================
-    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'              // Thymeleaf 템플릿 엔진
-    implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:4.0.1'              // 레이아웃 모듈화 (헤더, 푸터 등)
-    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'               // 화면에서 권한/로그인 상태 체크
-
-    // =======================================================
-    // 6. Tools (개발 편의 도구)
-    // =======================================================
-    compileOnly 'org.projectlombok:lombok'                                  // Lombok (Getter, Setter 등 자동 생성)
+    compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'         // 코드 수정 시 자동 재시작 (Hot-Reload)
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
-    // =======================================================
-    // 7. Testing (테스트)
-    // =======================================================
     testCompileOnly 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
 
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'                    // JUnit 5 실행기
+    testImplementation 'org.springframework.boot:spring-boot-resttestclient'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-    testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'   // API 슬라이스 테스트
-    testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa-test' // DB 슬라이스 테스트
-    testImplementation 'org.springframework.boot:spring-boot-starter-security-test' // 시큐리티 인증/인가 테스트
-    testImplementation 'org.springframework.boot:spring-boot-starter-validation-test' // 유효성 검사 테스트
-    testImplementation 'org.springframework.boot:spring-boot-starter-flyway-test'   // 마이그레이션 테스트
-    testImplementation 'org.springframework.boot:spring-boot-starter-thymeleaf-test'// 화면 렌더링 테스트
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+
 }
-
 
 tasks.named('test') {
     useJUnitPlatform()

@@ -8,13 +8,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/members")
 @RequiredArgsConstructor
 public class MemberApiController{
 
     private final MemberService service;
 
-    @PostMapping
+    @PostMapping("/members")
     public ResponseEntity<MemberDescription> saveMember(
          @RequestBody MemberSaveRequest request
     ){
