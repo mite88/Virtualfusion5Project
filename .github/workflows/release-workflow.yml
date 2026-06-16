@@ -36,6 +36,10 @@ jobs:
     name: 도커 이미지 빌드
     runs-on: ubuntu-latest
     needs: tagging
+    # 💡 핵심: 이 단계의 모든 명령어가 app_ci 폴더 안에서 실행되도록 설정
+    defaults:
+      run:
+        working-directory: app_ci
 
     steps:
       - name : 리포지터리로 체크아웃
@@ -50,10 +54,10 @@ jobs:
          java-version: '25'
 
       - name: gradlew 권한셋팅
-        run: chmod +x app_ci/gradlew
+        run: chmod +x gradlew
 
       - name : Gradle 빌드
-        run: ./app_ci/gradlew build
+        run: ./gradlew build
 
       # bulid/libs/xxx.jar
       - name : Docker Registry 로그인
