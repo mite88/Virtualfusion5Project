@@ -25,6 +25,13 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }} # 자동으로 들어가짐 ㅇㅁㅇ
 
+      - name : 릴리즈
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{steps.tag_version.outputs.new_tag}}
+          name: ${{steps.tag_version.outputs.new_tag}}
+          body : ${{steps.tag_version.outputs.new_tag}}
+
   build-image:
     name: 도커 이미지 빌드
     runs-on: ubuntu-latest
@@ -43,10 +50,10 @@ jobs:
          java-version: '25'
 
       - name: gradlew 권한셋팅
-        run: chmod +x ./gradlew
+        run: chmod +x app_ci/gradlew
 
       - name : Gradle 빌드
-        run : ./gradlew build
+        run: ./app_ci/gradlew build
 
       # bulid/libs/xxx.jar
       - name : Docker Registry 로그인
