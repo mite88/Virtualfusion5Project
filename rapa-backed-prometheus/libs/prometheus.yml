@@ -1,0 +1,13 @@
+global:
+  scrape_interval: 1m # 메트릭을 수집할 기본 주기
+  scrape_timeout: 1m # 메트릭을 수집할 때 사용할 타임아웃 시간
+
+scrape_configs:
+  # 이 수집 작업(Job)의 이름을 지정합니다. (그라파나 등에서 식별용으로 사용)
+  - job_name: 'prometheus_project'
+    scrape_interval: 15s
+    metrics_path: /actuator/prometheus
+    # 메트릭을 수집할 대상(target)을 지정합니다.
+    static_configs:
+    # docker로 실행해서 localhost는 작동하지 않음
+      - targets: ['host.docker.internal:8080'] 
